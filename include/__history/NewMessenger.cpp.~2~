@@ -1,0 +1,57 @@
+#include <iostream>
+#include <string>
+#include <MessengerIterface.h>
+#include <ComponentInterface.h>
+
+class NewMessenger : public MessengerInterface, public ComponentInterface
+{
+	public:
+		NewMessenger();
+		virtual ~NewMessenger();
+		virtual std::string say();
+
+        //ComponentInterface:
+        bool implements(std::string interfaceName);
+        void* getInstance();
+        void release();
+
+	private:
+		std::string mensaje;
+        int referenceCounter;
+        bool implemented;
+};
+NewMessenger::NewMessenger() : mensaje ("Holandaaaa"){};
+
+NewMessenger::~NewMessenger() {}
+
+std::string NewMessenger::say() {
+	return mensaje
+}
+
+
+//ComponentInterface:
+bool NewMessenger::implements(std::string interfaceName)
+{
+	return (interfaceName == "ComponentInterface" || interfaceName == "MessengerInterface") ?
+        implemented = true
+            : implemented = false;
+}
+
+void* NewMessenger::getInstance()
+{
+    if(implemented) {  referenceCounter++;  return this; }
+    return NULL;
+}
+
+void NewMessenger::release()
+{
+    referenceCounter--;
+    if(referenceCounter <= 0) delete this;
+}
+
+extern "C" ComponentInterface* create();
+
+ComponentInterface* create()
+{
+	return (ComponentInterface*) new NewMessenger();
+}
